@@ -1,0 +1,20 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    @apply antialiased;
+  }
+
+  body {
+    @apply text-slate-900;
+  }
+}
+
+@layer utilities {
+  .bg-grid-slate-200 {
+    background-image: linear-gradient(to right, rgb(226 232 240 / 0.3) 1px, transparent 1px),
+                      linear-gradient(to bottom, rgb(226 232 240 / 0.3) 1px, transparent 1px);
+  }
+}
