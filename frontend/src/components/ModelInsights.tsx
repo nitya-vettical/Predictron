@@ -1,6 +1,14 @@
 import { BarChart3, Info } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
 export default function ModelInsights() {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setMounted(true), 100);
+    return () => clearTimeout(timer);
+  }, []);
+
   const importances = [
     { feature: 'Transmission Power', value: 64.6, color: 'bg-cyan-500' },
     { feature: 'Network Load', value: 25.1, color: 'bg-blue-500' },
@@ -38,22 +46,11 @@ export default function ModelInsights() {
             <div className="h-3 w-full bg-slate-100 rounded-full overflow-hidden">
               <div
                 className={`h-full ${item.color} rounded-full transition-all duration-1000 ease-out`}
-                style={{ width: `${item.value}%` }}
+                style={{ width: mounted ? `${item.value}%` : '0%' }}
               ></div>
             </div>
           </div>
         ))}
-      </div>
-
-      <div className="mt-8 pt-6 border-t border-slate-100">
-        <div className="flex items-start gap-3 bg-cyan-50/50 p-4 rounded-xl border border-cyan-100/50">
-          <div className="w-5 h-5 mt-0.5 text-cyan-600 shrink-0">
-            <Info className="w-5 h-5" />
-          </div>
-          <p className="text-xs text-slate-600 leading-relaxed">
-            <span className="font-semibold text-cyan-700">Interview Tip:</span> Explain that this visualization helps stakeholders understand the model's decision-making process, making it an "Explainable AI" (XAI) feature.
-          </p>
-        </div>
       </div>
     </div>
   );
