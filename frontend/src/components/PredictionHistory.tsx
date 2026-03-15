@@ -1,6 +1,16 @@
 import { useEffect, useState } from 'react';
 import { History, Calendar, Zap, AlertTriangle } from 'lucide-react';
-import { supabase, Prediction } from '../lib/supabase';
+
+export interface Prediction {
+  id: number;
+  time_value: number;
+  bs_station: string;
+  load: number;
+  esmode: number;
+  txpower: number;
+  predicted_energy: number;
+  created_at: string;
+}
 
 export default function PredictionHistory() {
   const [predictions, setPredictions] = useState<Prediction[]>([]);
@@ -16,21 +26,16 @@ export default function PredictionHistory() {
   }, []);
 
   const fetchPredictions = async () => {
-    // Gracefully handle missing Supabase configuration
-    if (!supabase) {
-      setLoading(false);
-      return;
-    }
-
     try {
       setFetchError(false);
-      const { data, error } = await supabase
-        .from('predictions')
-        .select('*')
-        .order('created_at', { ascending: false })
-        .limit(10);
-
-      if (error) throw error;
+      const apiUrl = `${import.meta.env.VITE_API_URL ?? 'http://127.0.0.1:5000'}/history`;
+      const response = await fetch(apiUrl);
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch predictions from backend');
+      }
+      
+      const data = await response.json();
       setPredictions(data || []);
     } catch (error) {
       console.error('Error fetching predictions:', error);
@@ -49,27 +54,6 @@ export default function PredictionHistory() {
       minute: '2-digit',
     });
   };
-
-  // Supabase not configured
-  if (!supabase) {
-    return (
-      <div className="bg-white rounded-2xl p-8 border border-slate-200 shadow-sm">
-        <div className="flex items-center gap-2 mb-4">
-          <History className="w-5 h-5 text-cyan-600" />
-          <h3 className="text-lg font-semibold text-slate-800">Recent Predictions</h3>
-        </div>
-        <div className="flex items-center gap-3 p-4 bg-amber-50 border border-amber-200 rounded-xl">
-          <AlertTriangle className="w-5 h-5 text-amber-500 shrink-0" />
-          <p className="text-sm text-amber-700">
-            History unavailable — Supabase is not configured. Add{' '}
-            <code className="font-mono bg-amber-100 px-1 rounded">VITE_SUPABASE_URL</code> and{' '}
-            <code className="font-mono bg-amber-100 px-1 rounded">VITE_SUPABASE_ANON_KEY</code>{' '}
-            to your <code className="font-mono bg-amber-100 px-1 rounded">.env</code> file.
-          </p>
-        </div>
-      </div>
-    );
-  }
 
   if (loading) {
     return (
@@ -92,7 +76,7 @@ export default function PredictionHistory() {
           <div className="flex items-center gap-3 p-4 bg-red-50 border border-red-100 rounded-xl">
             <AlertTriangle className="w-5 h-5 text-red-500 shrink-0" />
             <p className="text-sm text-red-700">
-              Failed to connect to Supabase. Check your connection or database configuration.
+              Failed to connect to the backend server to fetch history.
             </p>
           </div>
         ) : (

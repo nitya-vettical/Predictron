@@ -14,6 +14,8 @@ from flask_cors import CORS
 import joblib
 import pandas as pd
 import os
+import sqlite3
+from datetime import datetime
 
 app = Flask(__name__)
 CORS(app)
@@ -29,6 +31,31 @@ scaler = joblib.load(SCALER_PATH)
 
 # Mapping from frontend BS strings to label-encoded integers (alphabetical order)
 BS_MAP = {'BS1': 0, 'BS2': 1, 'BS3': 2, 'BS4': 3, 'BS5': 4}
+
+# ---------------------------------------------------------------------------
+# Database Setup
+# ---------------------------------------------------------------------------
+DB_PATH = 'history.db'
+
+def init_db():
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS predictions (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            time_value INTEGER,
+            bs_station TEXT,
+            load REAL,
+            esmode INTEGER,
+            txpower REAL,
+            predicted_energy REAL,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        )
+    ''')
+    conn.commit()
+    conn.close()
+
+init_db()
 
 # ---------------------------------------------------------------------------
 # Routes
@@ -100,12 +127,46 @@ def predict():
 
         # --- Predict ---
         prediction = model.predict(input_scaled)
-        return jsonify({"prediction": round(float(prediction[0]), 4)})
+        pred_val = round(float(prediction[0]), 4)
+        
+        # --- Save to DB ---
+        conn = sqlite3.connect(DB_PATH)
+        cursor = conn.cursor()
+        cursor.execute('''
+            INSERT INTO predictions (time_value, bs_station, load, esmode, txpower, predicted_energy)
+            VALUES (?, ?, ?, ?, ?, ?)
+        ''', (time_val, bs_val, load_val, esmode_val, txpower_val, pred_val))
+        conn.commit()
+        conn.close()
+
+        return jsonify({"prediction": pred_val})
 
     except ValueError as ve:
         return jsonify({"error": f"Invalid value: {str(ve)}"}), 400
     except Exception as e:
         return jsonify({"error": "Internal server error", "details": str(e)}), 500
+
+@app.route('/history', methods=['GET'])
+def history():
+    """Fetch recent prediction history."""
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        conn.row_factory = sqlite3.Row
+        cursor = conn.cursor()
+        cursor.execute('SELECT * FROM predictions ORDER BY created_at DESC LIMIT 10')
+        rows = cursor.fetchall()
+        conn.close()
+        
+        predictions = [dict(row) for row in rows]
+        # Append "Z" so JS parses local times as UTC if needed, or JS handles local correctly?
+        # SQLite CURRENT_TIMESTAMP is UTC.
+        for p in predictions:
+            if not p['created_at'].endswith('Z'):
+                p['created_at'] = p['created_at'] + 'Z'
+                
+        return jsonify(predictions)
+    except Exception as e:
+        return jsonify({"error": "Failed to fetch history", "details": str(e)}), 500
 
 
 if __name__ == '__main__':

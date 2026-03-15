@@ -20,6 +20,9 @@ venv/
 env/
 .env
 
+# Database
+*.db
+
 # Models (optional - keeping it for now as it's small, but usually ignored)
 # *.pkl
 

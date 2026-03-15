@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { Zap, Radio } from 'lucide-react';
-import { supabase } from './lib/supabase';
 import PredictionForm, { PredictionInput } from './components/PredictionForm';
 import PredictionResult from './components/PredictionResult';
 import PredictionHistory from './components/PredictionHistory';
@@ -37,22 +36,6 @@ export default function App() {
 
       const result = await response.json();
       setPrediction(result.prediction);
-
-      // Save to Supabase History if configured
-      if (supabase) {
-        try {
-          await supabase.from('predictions').insert({
-            time_value: data.time,
-            bs_station: data.bs,
-            load: data.load,
-            esmode: data.esmode,
-            txpower: data.txpower,
-            predicted_energy: result.prediction,
-          });
-        } catch (saveErr) {
-          console.error('Failed to save to history:', saveErr);
-        }
-      }
 
       setTimeout(() => {
         window.dispatchEvent(new Event('refreshHistory'));
@@ -132,17 +115,15 @@ export default function App() {
 
             <div className="lg:col-span-1">
               <ModelInsights />
-              {supabase && (
-                <div className="mt-8 text-center">
-                  <button
-                    onClick={() => setShowHistory(!showHistory)}
-                    className="text-xs font-semibold text-slate-400 hover:text-cyan-600 transition-colors uppercase tracking-widest flex items-center gap-2 mx-auto"
-                  >
-                    <div className="w-2 h-2 rounded-full bg-emerald-500"></div>
-                    {showHistory ? 'Hide Prediction History' : 'Show Prediction History'}
-                  </button>
-                </div>
-              )}
+              <div className="mt-8 text-center">
+                <button
+                  onClick={() => setShowHistory(!showHistory)}
+                  className="text-xs font-semibold text-slate-400 hover:text-cyan-600 transition-colors uppercase tracking-widest flex items-center gap-2 mx-auto"
+                >
+                  <div className="w-2 h-2 rounded-full bg-emerald-500"></div>
+                  {showHistory ? 'Hide Prediction History' : 'Show Prediction History'}
+                </button>
+              </div>
             </div>
           </div>
 
