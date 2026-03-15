@@ -11,6 +11,7 @@ Predictron predicts the energy consumption (in Watts) of a 5G base station based
 - Predict 5G energy consumption in real-time using ML
 - Interactive parameter sliders and dropdowns
 - Network activity visualization (Canvas-based)
+- Model Insights: Global feature importance (Explainable AI)
 - Prediction history via Supabase (optional)
 - Efficiency rating and daily/monthly energy estimates
 

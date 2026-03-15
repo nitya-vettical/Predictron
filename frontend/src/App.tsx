@@ -132,16 +132,17 @@ export default function App() {
 
             <div className="lg:col-span-1">
               <ModelInsights />
-              
-              <div className="mt-8 text-center">
-                <button
-                  onClick={() => setShowHistory(!showHistory)}
-                  className="text-xs font-semibold text-slate-400 hover:text-cyan-600 transition-colors uppercase tracking-widest flex items-center gap-2 mx-auto"
-                >
-                  <div className={`w-2 h-2 rounded-full ${supabase ? 'bg-emerald-500' : 'bg-slate-300'}`}></div>
-                  {showHistory ? 'Hide Prediction History' : 'Show Prediction History'}
-                </button>
-              </div>
+              {supabase && (
+                <div className="mt-8 text-center">
+                  <button
+                    onClick={() => setShowHistory(!showHistory)}
+                    className="text-xs font-semibold text-slate-400 hover:text-cyan-600 transition-colors uppercase tracking-widest flex items-center gap-2 mx-auto"
+                  >
+                    <div className="w-2 h-2 rounded-full bg-emerald-500"></div>
+                    {showHistory ? 'Hide Prediction History' : 'Show Prediction History'}
+                  </button>
+                </div>
+              )}
             </div>
           </div>
 
