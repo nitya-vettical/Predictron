@@ -12,7 +12,7 @@ Predictron predicts the energy consumption (in Watts) of a 5G base station based
 - Interactive parameter sliders and dropdowns
 - Network activity visualization (Canvas-based)
 - Model Insights: Global feature importance (Explainable AI)
-- Prediction history via Supabase (optional)
+- Prediction history using SQLite
 - Efficiency rating and daily/monthly energy estimates
 
 ---
@@ -24,7 +24,7 @@ Predictron predicts the energy consumption (in Watts) of a 5G base station based
 | Frontend  | React 18, TypeScript, Vite, TailwindCSS |
 | ML Model  | XGBoost Regressor (scikit-learn pipeline) |
 | Backend   | Python, Flask, Flask-CORS           |
-| Database  | Supabase (PostgreSQL) — optional    |
+| Database  | SQLite (Local History Database)     |
 
 ---
 
@@ -80,7 +80,6 @@ cd frontend
 
 # Copy and configure environment variables
 copy .env.example .env
-# Edit .env and set VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY (optional)
 
 # Install dependencies
 npm install
@@ -110,11 +109,9 @@ Predictron/
 │   │   ├── components/
 │   │   │   ├── PredictionForm.tsx      # Input form
 │   │   │   ├── PredictionResult.tsx    # Result display card
-│   │   │   ├── PredictionHistory.tsx   # Supabase history table
+│   │   │   ├── PredictionHistory.tsx   # Local SQLite history table
 │   │   │   ├── NetworkVisualization.tsx# Canvas animation
 │   │   │   └── InfoCards.tsx           # Feature highlights
-│   │   └── lib/
-│   │       └── supabase.ts             # Supabase client
 │   ├── .env.example                    # Environment variable template
 │   └── package.json
 └── README.md
@@ -165,4 +162,3 @@ Returns predicted energy consumption in Watts.
 
 - The `models/` directory and `.env` are excluded from version control (see `.gitignore`).
 - Run `python main.py` any time to retrain the model from scratch.
-- Supabase integration is **optional** — the prediction feature works without it.
