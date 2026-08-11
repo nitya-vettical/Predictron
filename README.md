@@ -1,4 +1,4 @@
-# Predictron 🔋
+# Predictron 
 
 > **AI-powered 5G base station energy consumption forecasting**
 
@@ -6,7 +6,7 @@ Predictron predicts the energy consumption (in Watts) of a 5G base station based
 
 ---
 
-## 🎯 Features
+##  Features
 
 - Predict 5G energy consumption in real-time using ML
 - Interactive parameter sliders and dropdowns
@@ -17,7 +17,7 @@ Predictron predicts the energy consumption (in Watts) of a 5G base station based
 
 ---
 
-## 🛠 Tech Stack
+##  Tech Stack
 
 | Layer     | Technology                          |
 |-----------|-------------------------------------|
@@ -28,7 +28,7 @@ Predictron predicts the energy consumption (in Watts) of a 5G base station based
 
 ---
 
-## 🏗 Architecture
+##  Architecture
 
 ```
 ┌─────────────────────────────────────────┐
@@ -50,7 +50,7 @@ Predictron predicts the energy consumption (in Watts) of a 5G base station based
 
 ---
 
-## 🚀 Quick Start
+##  Quick Start
 
 ### 1. Backend
 
@@ -91,7 +91,7 @@ npm run dev
 
 ---
 
-## 📁 Project Structure
+##  Project Structure
 
 ```
 Predictron/
@@ -119,7 +119,7 @@ Predictron/
 
 ---
 
-## 🔌 API Reference
+##  API Reference
 
 ### `GET /health`
 Returns API status.
